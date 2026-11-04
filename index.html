@@ -1,0 +1,621 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>The Worsters</title>
+<meta name="theme-color" content="#00301F">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="The Worsters">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" type="image/png" href="icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700;800&display=swap">
+<style>
+/* Augusta look: fairway greens, tournament yellow, azalea pink. Lexend, solid fills, pills. One column, big tap targets, thumb first. */
+:root{
+  --bg:#00301F;--panel:#006747;--well:#004E36;--press:#00593D;--stripe:#00704D;
+  --ink:#FFFFFF;--mute:#D5EADD;--accent:#FFD530;--on-accent:#00301F;--tint:rgba(255,255,255,.14);--clay:#FFD530;--sand:#D5EADD;--good:#FFFFFF;--azalea:#F9A8C4;
+  --font:Lexend,system-ui,sans-serif;color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);font-size:15px;line-height:22px}
+body{padding:max(16px,env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) 24px max(16px,env(safe-area-inset-left,0px));-webkit-tap-highlight-color:transparent}
+button,input{font:inherit;color:inherit}
+.wrap{max-width:560px;margin:0 auto;display:flex;flex-direction:column;gap:12px;min-height:calc(100dvh - 40px)}
+.lbl{font-size:12px;line-height:15px;font-weight:600;letter-spacing:.4px;text-transform:uppercase;color:var(--sand)}
+.dsp{font-weight:800;text-transform:uppercase;line-height:1.15;text-wrap:balance;margin:0}
+.title{font-size:26px;color:var(--accent)}
+.sub{font-size:13px;line-height:18px;font-weight:600;color:var(--mute);margin:0}
+.num{font-variant-numeric:tabular-nums}
+.card{background:var(--panel);border-radius:18px;padding:14px;display:flex;flex-direction:column;gap:10px}
+.head{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.head>div{min-width:0;flex:1}
+.row{display:flex;gap:8px;align-items:center}
+.between{justify-content:space-between}
+.btn{background:var(--panel);border:none;border-radius:999px;min-height:48px;padding:0 18px;font-weight:600;cursor:pointer;touch-action:manipulation}
+.btn:active{background:var(--press)}
+.btn:disabled{opacity:.5;cursor:default}
+.btn:focus-visible,.ico:focus-visible,.pick:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.pri{background:var(--accent);color:var(--on-accent);font-weight:700}
+.pri:active{background:#E6BE1E}
+.hero{background:repeating-linear-gradient(90deg,var(--panel) 0 30px,var(--stripe) 30px 60px);border-radius:18px;padding:16px 14px}
+.pin{width:30px;height:30px;flex:none}
+.titlerow{display:flex;align-items:center;gap:8px}
+.big{min-height:58px;font-size:17px;width:100%}
+.well{background:var(--well)}
+.grow{flex:1}
+.ico{flex:none;width:44px;height:44px;border-radius:50%;border:none;background:var(--panel);display:grid;place-items:center;cursor:pointer;font-weight:800;font-size:17px;padding:0}
+.ico svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.seg{display:flex;gap:4px;background:var(--panel);border-radius:999px;padding:4px;align-items:center}
+.seg span{padding:0 10px 0 12px;font-size:13px;font-weight:700;color:var(--sand)}
+.seg button{flex:1;min-height:44px;border:none;border-radius:999px;background:transparent;color:var(--mute);font-weight:700;cursor:pointer}
+.seg button.on{background:var(--accent);color:var(--on-accent)}
+.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.pick{min-height:58px;border:none;border-radius:14px;background:var(--well);cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:4px 2px;touch-action:manipulation}
+.pick b{font-weight:700;font-size:14px;line-height:18px}
+.pick small{font-size:12px;line-height:15px;color:var(--mute);font-weight:500}
+.pick.on{background:var(--accent);color:var(--on-accent)}
+.pick.on small{color:var(--on-accent)}
+.pick:disabled{opacity:.35}
+.name{font-weight:800;font-size:17px}
+.tag{font-size:12px;line-height:16px;font-weight:700;padding:4px 11px;border-radius:999px;background:var(--well);white-space:nowrap}
+.tag.live{background:var(--azalea);color:var(--on-accent)}
+.tag.ok{background:var(--good);color:var(--on-accent)}
+.banner{padding:12px 16px;border-radius:18px;background:var(--tint);font-size:14px;line-height:20px;font-weight:600}
+.banner.hot{background:rgba(255,213,48,.2)}
+.segscore{display:grid;grid-template-columns:1fr auto 1fr;gap:10px;align-items:center;text-align:center}
+.segscore .v{font-weight:800;font-size:32px;line-height:38px}
+.segscore .n{font-size:13px;font-weight:600;color:var(--mute);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.foot{position:sticky;bottom:0;margin-top:auto;padding:10px 0 max(6px,env(safe-area-inset-bottom,0px));background:linear-gradient(transparent,var(--bg) 14px);display:flex;gap:8px}
+.foot .btn{min-height:58px}
+.rd{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;min-height:58px;padding:10px 14px;border:none;border-radius:18px;background:var(--panel);text-align:left;cursor:pointer}
+.rd:disabled{cursor:default;color:var(--mute)}
+.board{width:100%;border-collapse:collapse;font-size:14px}
+.board th{font-weight:700;text-align:right;padding:6px 0 6px 8px;color:var(--sand);font-size:13px;max-width:96px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.board th:first-child,.board td:first-child{text-align:left;padding-left:0}
+.board td{padding:8px 0 8px 8px;text-align:right;font-variant-numeric:tabular-nums;font-weight:600}
+.board td:first-child{color:var(--mute)}
+.board tr.total td{font-weight:800;font-size:18px;color:var(--ink);border-top:1px solid var(--press);padding-top:10px}
+.champ{font-size:34px;color:var(--accent)}
+.match{display:flex;flex-direction:column;gap:8px}
+.status{text-align:center;padding:24px 14px}
+.status .dsp{font-size:30px;color:var(--accent)}
+#toast{position:fixed;top:max(12px,env(safe-area-inset-top,0px));left:16px;right:16px;z-index:8;display:flex;justify-content:center;pointer-events:none}
+.toast{width:100%;max-width:528px;padding:14px 16px;border-radius:18px;display:flex;flex-direction:column;gap:4px;box-shadow:0 10px 26px rgba(0,0,0,.45);animation:drop .22s ease-out}
+.toast b{font-weight:700;font-size:16px;line-height:22px}
+.toast small{font-size:13px;line-height:17px;font-weight:600}
+.toast.good{background:var(--accent);color:var(--on-accent)}
+.toast.bad{background:var(--azalea);color:var(--on-accent)}
+@keyframes drop{from{transform:translateY(-16px);opacity:0}to{transform:none;opacity:1}}
+@media (prefers-reduced-motion:reduce){.toast{animation:none}}
+.parg{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:6px}
+.part{min-height:62px;border:none;border-radius:12px;background:var(--well);display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;padding:2px;touch-action:manipulation}
+.part:active{background:var(--press)}
+.part small{font-size:12px;line-height:15px;font-weight:600;color:var(--mute)}
+.part b{font-size:22px;line-height:26px;font-weight:800;color:var(--accent)}
+.part:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.inp{width:100%;background:var(--well);border:none;border-radius:999px;min-height:48px;padding:0 18px;font-size:16px}
+.hero .ico{background:var(--well)}
+.lnk{background:none;border:none;color:var(--mute);font-weight:600;min-height:44px;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+.sheetbg{position:fixed;inset:0;background:rgba(0,48,31,.78);display:flex;align-items:flex-end;justify-content:center;z-index:9}
+.sheet{background:var(--panel);width:100%;max-width:560px;max-height:86dvh;overflow:auto;border-radius:22px 22px 0 0;padding:20px 18px max(20px,env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:12px}
+.sheet h2{font-size:20px;color:var(--clay)}
+.sheet h3{font-size:14px;margin:6px 0 0;color:var(--sand)}
+.sheet p{margin:0;font-size:14px;line-height:21px}
+.sheet .q{font-weight:700;margin-top:4px}
+.sheet label{display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:600;color:var(--sand)}
+.sheet input{background:var(--well);border:none;border-radius:999px;min-height:48px;padding:0 18px;font-size:16px}
+.sheet .board td,.sheet .board th{padding-top:5px;padding-bottom:5px}
+</style>
+</head>
+<body>
+<div class="wrap" id="app"></div>
+<div id="sheet"></div>
+<input type="file" id="restoreFile" accept=".json,application/json" hidden aria-label="Backup file">
+<div id="toast" role="status" aria-live="polite"></div>
+<script>
+const SEGS=[{from:0,to:6,worth:1,label:'Holes 1-6',name:'Mulligan Meadows'},{from:6,to:12,worth:1,label:'Holes 7-12',name:'Beverage Cart Bend'},{from:12,to:18,worth:2,label:'Holes 13-18',name:'Collapse Corner'}];
+/* {n} becomes the player's name. */
+const QUIPS={
+"double": [
+"Pick it up, {n}. The hole has suffered enough.",
+"That hole is now under investigation, {n}.",
+"{n} has requested a moment of silence.",
+"Somewhere, a beverage cart driver just looked away.",
+"The ball has asked to be traded.",
+"Double+. We will let the plus carry the shame, {n}.",
+"{n} just made the ranger take his hat off.",
+"That hole goes on the permanent record, {n}.",
+"{n}'s ball has stopped returning calls.",
+"We don't talk about that one, {n}.",
+"The scorecard pencil just snapped.",
+"{n} played that hole like it owed money.",
+"Thoughts and prayers to {n}'s scorecard.",
+"That was less golf, more archaeology.",
+"{n} took the scenic route. Through everything.",
+"Even the geese are embarrassed, {n}.",
+"{n} has seen every blade of grass on this hole.",
+"Zero points. Zero witnesses, hopefully.",
+"The hole won, {n}. It wasn't close.",
+"{n}'s caddie would quit, if {n} had one.",
+"File that one under character building.",
+"{n} is now shopping for a new hobby.",
+"That hole just got added to {n}'s list of enemies.",
+"Somebody check on {n}'s wedge. It's been through a lot.",
+"That wasn't a hole, {n}. That was a long weekend.",
+"{n} found sand, water and regret.",
+"The lost and found is now full of {n}'s golf balls.",
+"{n} is one swing away from pickleball.",
+"That score has been sealed by the rules committee.",
+"Let's all agree that hole never happened.",
+"{n} needs a minute. The clubs need two.",
+"That took longer than a charity scramble.",
+"The grounds crew has questions, {n}.",
+"{n} has officially paid for that hole in full.",
+"The beverage cart is on its way, {n}. It's urgent.",
+"New ball, new attitude, same {n}."
+],
+"bogey": [
+"Bogey. {n} is already calling it a golfer's par.",
+"One point, zero bragging rights, {n}.",
+"{n} made bogey and is already blaming the greens.",
+"The bogey man has paid {n} a visit.",
+"Not great, {n}. Not a story for dinner either.",
+"Bogey. {n} would like a word with the wind.",
+"A bogey, {n}. The Jacket just sniffed the air.",
+"One over. {n} calls that a moral victory.",
+"Bogey. Nothing a cold drink won't fix.",
+"{n} was one putt from glory. It stayed one putt.",
+"That's a lot of effort for one point, {n}.",
+"Bogey. The putter is in the doghouse.",
+"{n} says the greens are slow. They are not.",
+"Bogey. {n} has a long explanation if you have time.",
+"Not a disaster, {n}. Not a highlight either.",
+"{n} left that one on the lip, along with some dignity.",
+"Bogey. {n}'s handicap nods in approval.",
+"A 13-handicap special from {n}.",
+"{n} just played that exactly to their handicap.",
+"That's a bogey on paper. In {n}'s heart it was a par.",
+"Bogey. {n} would like to speak to the superintendent.",
+"Three-putt energy from {n}.",
+"One point. Put it in the bank, {n}. It's a small bank.",
+"{n} is blaming the yardage book. There is no yardage book.",
+"Bogey. The wind was definitely a factor, says {n}.",
+"Bogey. Could've been worse. {n} has proof.",
+"{n} and bogey are in a long-term relationship.",
+"Nice try, {n}. The golf gods said one more.",
+"Bogey. Even the squirrels shrugged.",
+"{n} almost had it. That's the whole story.",
+"That par putt had eyes, {n}. Just not for the hole.",
+"Bogey. {n} is staring at the putter like it lied.",
+"The green read was creative, {n}.",
+"{n} is keeping the streak of average alive.",
+"One over and one excuse, {n}.",
+"That bogey was brought to you by {n}'s short game."
+],
+"par": [
+"Par! Polite golf claps for {n}.",
+"Par, {n}. Act like you have been here before.",
+"Fairway, green, two putts. Who are you, {n}?",
+"Par! The Jacket stays in the closet for now, {n}.",
+"Two points for {n}. The patrons nod quietly.",
+"Par! {n} looks like someone who read a golf magazine.",
+"Par! {n} briefly resembles a golfer.",
+"Par! Somebody get {n} a sponsor.",
+"Par, {n}. Your YouTube swing coach is proud.",
+"Par! {n} did that on purpose. Probably.",
+"Par! That's how it looks on TV, {n}.",
+"Right down the middle of boring, {n}. Beautiful.",
+"Par! {n} just saved the round and the ride home.",
+"Textbook par, {n}. Somebody wrote that textbook by accident.",
+"Par! {n} can hold their head up at the snack bar.",
+"Par! The Jacket shudders in its closet.",
+"Solid par, {n}. Nobody's calling the papers, but still.",
+"Par! {n} just stole two points from the golf gods.",
+"Par. {n} tips their cap to an imaginary crowd.",
+"Par! Even the ranger gave a thumbs up.",
+"Par! {n}'s putter is out of the doghouse.",
+"Nice par, {n}. Try to remember how you did that.",
+"Par! {n} just went one hole without incident.",
+"Par! That's a grinder's par, {n}.",
+"Clean card on that one, {n}. Frame it.",
+"Par! {n} has stopped grinding their teeth.",
+"Par! The scorecard pencil is smiling, {n}.",
+"Par! {n} is officially not collapsing yet.",
+"Two clean points. {n} is all business.",
+"Par, {n}. The gallery of two is impressed.",
+"Par! Who let {n} have a good swing?",
+"Par! {n} just made this look almost easy.",
+"Smooth par, {n}. Don't say anything. Keep walking.",
+"Par! {n} will now explain the swing thought to everyone.",
+"Par! {n} has located the fairway. Alert the press.",
+"Par! Keep this up, {n}, and you'll need a bigger hat."
+],
+"birdie": [
+"Birdie! {n} will mention this at lunch. Twice.",
+"Birdie! Somebody check {n}'s bag for a hidden pro.",
+"Birdie, {n}! The patrons are on their feet.",
+"Birdie! {n} has earned one full fist pump.",
+"Birdie! {n} just found the cheat code.",
+"Birdie! Someone alert the local paper.",
+"Birdie! {n}'s walk just got 20 percent cooler.",
+"Birdie, {n}! Tip your cap and try not to skip.",
+"Birdie! That one's going in the group chat.",
+"Birdie! {n} wants it noted for the record.",
+"Three points for {n}. The patrons lose their minds.",
+"Birdie! {n} is now giving swing tips nobody asked for.",
+"Birdie! The flag tipped its cap, {n}.",
+"Birdie! {n} will be reenacting that in the parking lot.",
+"Dead solid birdie, {n}.",
+"Birdie! {n} looks 10 years younger.",
+"Birdie! The Jacket just moved closer to the other guy.",
+"Birdie! {n} is already on the phone to a sponsor.",
+"Birdie! Put it on the big board, {n}.",
+"Birdie! The golf gods blinked, {n}.",
+"Birdie! {n} has earned a free lap around the cart path.",
+"Birdie! Even the geese stood up for that one, {n}."
+],
+"eagle": [
+"EAGLE! {n} is now legally insufferable.",
+"Eagle! Frame the ball, {n}. Cancel your plans.",
+"EAGLE! Nobody talk to {n} for the rest of the day.",
+"EAGLE! Somebody call {n}'s mother.",
+"EAGLE! {n} is now signing autographs.",
+"EAGLE! That's going in the club newsletter, {n}.",
+"Eagle! {n} just bought a round for nobody in particular.",
+"EAGLE! The beverage cart is on the house, {n}. Not really.",
+"EAGLE! {n} has left the golf course and entered folklore.",
+"EAGLE! The other guy may need a minute.",
+"Eagle! {n} will tell this story until the end of time.",
+"EAGLE! Four points and a lifetime of reminders from {n}."
+],
+"albatross": [
+"ALBATROSS?! {n}, nobody is going to believe this.",
+"ALBATROSS! Call the clubhouse. {n} has gone full legend.",
+"ALBATROSS! That bird is rarer than {n}'s clean scorecard.",
+"ALBATROSS! Retire, {n}. It will never get better.",
+"ALBATROSS! We're going to need a second witness.",
+"ALBATROSS! Stop the round. Get the ball. Get a lawyer."
+],
+"hot": [
+"HOT STREAK! {n} has gone full heater.",
+"Back-to-back! {n} is on fire. Check the cart.",
+"Hot Streak! Somebody throw water on {n}.",
+"{n} is seeing the hole like a bucket.",
+"Hot Streak! {n} just asked for a bigger scorecard.",
+"Two straight! {n} has entered the zone. Do not speak to them.",
+"Hot Streak! The other guy just sighed out loud.",
+"That's no fluke, {n}. That's a problem.",
+"Hot Streak! {n} is officially playing a different course.",
+"Bonus point! The golf gods have a new favorite, {n}.",
+"Hot Streak! {n}'s putter now has its own agent.",
+"Don't touch {n}'s clubs. They're hot.",
+"Hot Streak! {n} is one hole away from being unbearable.",
+"{n} did it again! Nobody is more surprised than {n}.",
+"Hot Streak! The flagstick is scared of {n}.",
+"The ball is just following orders now, {n}.",
+"Hot Streak! Someone check {n}'s ball for a battery.",
+"Run it back! {n} said once wasn't enough.",
+"Hot Streak! {n} will be insufferable on the ride home.",
+"All aboard the scoring train! {n} is driving."
+]
+};
+let toastT=null;
+/* Each round keeps its own list of used lines, so a line can't repeat in that round, even after closing the app. */
+function quip(kind,name,r){
+  const used=r.used||(r.used={}),u=used[kind]||(used[kind]=[]),list=QUIPS[kind];
+  let open=list.map((_,i)=>i).filter(i=>!u.includes(i));
+  if(!open.length){u.length=0;open=list.map((_,i)=>i);}
+  const i=open[Math.floor(Math.random()*open.length)];
+  u.push(i);return esc(list[i].split('{n}').join(name));
+}
+const hotNeeds=d=>d===-1?'Birdie':d===-2?'Eagle':'Albatross';
+const isHot=(prev,d)=>prev!=null&&prev<=-1&&d!=null&&d<=prev;
+function hideToast(){clearTimeout(toastT);document.getElementById('toast').innerHTML='';}
+function showToast(p,v,hole,prev,r){
+  const bounced=prev!=null&&prev>=2&&v<=0,hot=isHot(prev,v);
+  const kind=hot?'hot':v>=2?'double':v===1?'bogey':v===0?'par':v===-1?'birdie':v===-2?'eagle':'albatross';
+  const good=v<=0;
+  const extra=hot?'+1 Hot Streak':bounced?'+1 Bounce-Back':'';
+  const next=hole>=17?'':v>=2?'Bounce-Back is live on the next hole':v<=-1?`Hot Streak live: ${hotNeeds(v).toLowerCase()} or better next hole`:'';
+  const notes=[extra,next].filter(Boolean).join(' · ');
+  const t=document.getElementById('toast');
+  t.innerHTML=`<div class="toast ${good?'good':'bad'}"><b>${quip(kind,S.names[p],r)}</b>${notes?`<small>${notes}</small>`:''}</div>`;
+  clearTimeout(toastT);toastT=setTimeout(()=>{t.innerHTML='';},2800);
+}
+
+const DEFAULT_PARS=[4,5,3,4,4,3,5,4,4,4,4,3,5,4,3,4,5,4];
+const RESULTS=[[3,'Double+'],[1,'Bogey'],[0,'Par'],[-1,'Birdie'],[-2,'Eagle'],[-3,'Albatross']];
+const blankRound=()=>({scores:[Array(18).fill(null),Array(18).fill(null)],hole:0,done:false});
+const blankEvent=()=>({rounds:[blankRound(),blankRound(),blankRound()],skipR3:false,match:null});
+const fresh=()=>({v:1,updated:0,names:['Joel','Lucas'],course:'',pars:DEFAULT_PARS.slice(),event:blankEvent(),history:[]});
+const KEY='jacket-open-v1';
+let S=fresh(),view={s:'home'},sample=false,realS=null,pendingRestore=null;
+
+/* Scoring */
+const pts=d=>d==null?0:d>=2?0:2-d;
+function calc(r){
+  const out=[0,1].map(p=>{
+    const c=r.scores[p];let stable=0,bounce=0,streak=0;
+    c.forEach((d,i)=>{if(d==null)return;stable+=pts(d);if(i>0&&c[i-1]!=null&&c[i-1]>=2&&d<=0)bounce++;if(i>0&&isHot(c[i-1],d))streak++;});
+    return{stable,bounce,streak,seg:0,segs:SEGS.map(s=>c.slice(s.from,s.to).reduce((a,d)=>a+pts(d),0))};
+  });
+  const wins=SEGS.map((s,i)=>{
+    const full=[0,1].every(p=>r.scores[p].slice(s.from,s.to).every(d=>d!=null));
+    if(!full)return null;
+    const a=out[0].segs[i],b=out[1].segs[i];
+    if(a===b)return -1;
+    const w=a>b?0:1;out[w].seg+=s.worth;return w;
+  });
+  out.forEach(o=>o.total=o.stable+o.seg+o.bounce+o.streak);
+  return{p:out,wins};
+}
+const E=()=>S.event;
+const doneRounds=()=>E().rounds.filter(r=>r.done);
+function totals(){const t=[0,0];doneRounds().forEach(r=>{const c=calc(r);t[0]+=c.p[0].total;t[1]+=c.p[1].total;});return t;}
+const matchReady=()=>{const r=E().rounds;return r[0].done&&r[1].done&&(r[2].done||E().skipR3);};
+function currentRound(){const r=E().rounds;for(let i=0;i<3;i++){if(i===2&&E().skipR3)continue;if(!r[i].done)return i;}return -1;}
+const started=r=>r.scores.some(c=>c.some(d=>d!=null));
+function startLead(){const[a,b]=totals(),g=Math.abs(a-b);const n=g>=9?2:g>=4?1:0;return a>b?n:-n;}
+function mState(m){
+  let lead=m.start;m.holes.forEach(h=>{if(h===0)lead++;if(h===1)lead--;});
+  const n=m.holes.length,left=Math.max(0,18-n);
+  let winner=null,sd=false;
+  if(n<18){if(Math.abs(lead)>left)winner=lead>0?0:1;}
+  else if(n===18){if(lead!==0)winner=lead>0?0:1;else sd=true;}
+  else{sd=true;const l=m.holes[n-1];if(l!==2)winner=l;}
+  return{lead,n,left,winner,sd};
+}
+function leadText(lead){return lead===0?'All square':`${nm(lead>0?0:1)} ${Math.abs(lead)} up`;}
+function resultText(st){
+  if(st.n>18)return `in sudden death, ${st.n-18} extra ${st.n===19?'hole':'holes'}`;
+  if(st.left===0)return `${Math.abs(st.lead)} up`;
+  return `${Math.abs(st.lead)} & ${st.left}`;
+}
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const nm=i=>esc(S.names[i]);
+
+/* Saving: instantly on this phone. Back up scores makes a copy that can be restored later. */
+function save(){
+  if(sample)return;
+  S.updated=Date.now();
+  try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}
+}
+/* The first version said Lucas and Dad. Keep any scores already entered with the right player. */
+function rename(v){if(v.names[1]==='Dad')v.names=v.event.rounds.some(started)?['Lucas','Joel']:['Joel','Lucas'];v.history.forEach(x=>{if(x.champ==='Dad')x.champ='Joel';if(x.loser==='Dad')x.loser='Joel';});return v;}
+function load(){try{const v=JSON.parse(localStorage.getItem(KEY)||'null');if(v&&v.v===1)S=rename(v);}catch(e){}}
+/* Screens */
+const PIN='<svg class="pin" viewBox="0 0 30 30" aria-hidden="true"><ellipse cx="12" cy="26" rx="10" ry="3" fill="#00301F"/><path d="M12 26V3" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round"/><path d="M13 3l14 5-14 5z" fill="#FFD530"/></svg>';
+const backHome='<button class="ico" data-a="home" aria-label="Back to home"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>';
+const help='<button class="ico" data-a="help" aria-label="Help for this screen">i</button>';
+const backIco='<button class="ico" data-a="week" aria-label="Back to the week"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>';
+const sampleBar=()=>sample?'<div class="banner hot row between"><span>Sample week. Nothing here saves.</span><button class="btn well" data-a="sampleOff">Exit</button></div>':'';
+
+function homeScreen(){
+  const cur=currentRound(),r=cur>=0?E().rounds[cur]:null,m=E().match,st=m&&mState(m);
+  const next=r?`Round ${cur+1}`:'Sunday Match';
+  const status=r?(started(r)?`Paused on hole ${r.hole+1}`:'Ready to tee off'):m?leadText(st.lead):'Winner takes the event';
+  const go=r?(started(r)?`Resume Round ${cur+1}`:`Tee off: Round ${cur+1}`):m?'Resume Sunday Match':'Start Sunday Match';
+  const[a,b]=totals();
+  const tot=S.pars.reduce((x,y)=>x+y,0);
+  let h=sampleBar()+`<div class="hero head"><div><div class="lbl">${nm(0)} vs. ${nm(1)}</div><div class="titlerow">${PIN}<h1 class="dsp title">The Worsters</h1></div></div>${help}</div>`;
+  h+=`<div class="card"><div class="row between"><span class="lbl">Next up</span>${doneRounds().length?`<span class="tag num">${nm(0)} ${a} · ${nm(1)} ${b}</span>`:''}</div><div class="name">${next}</div><p class="sub">${status}</p></div>`;
+  h+=`<div class="card"><label class="lbl" for="course">Course</label><input class="inp" id="course" maxlength="30" placeholder="Where are you playing?" value="${esc(S.course||'')}" autocomplete="off"></div>`;
+  h+=`<div class="card"><div class="row between"><span class="lbl">Tap a hole to change its par</span><span class="tag num">Par ${tot}</span></div>`;
+  SEGS.forEach(s=>{
+    const sum=S.pars.slice(s.from,s.to).reduce((x,y)=>x+y,0);
+    h+=`<div class="row between"><span class="sub">${s.name}</span><span class="sub num">Par ${sum}</span></div><div class="parg">`;
+    for(let i=s.from;i<s.to;i++)h+=`<button class="part" data-a="cyclePar" data-i="${i}" aria-label="Hole ${i+1}, par ${S.pars[i]}. Tap to change."><small>${i+1}</small><b>${S.pars[i]}</b></button>`;
+    h+='</div>';
+  });
+  h+='</div>';
+  h+=`<div class="foot"><button class="btn" data-a="week">Standings</button><button class="btn pri grow" data-a="teeOff">${go}</button></div>`;
+  return h;
+}
+
+function weekScreen(){
+  const e=E(),cur=currentRound(),[a,b]=totals(),any=doneRounds().length>0;
+  const last=S.history[S.history.length-1];
+  let h=sampleBar()+`<div class="head">${backHome}<div><div class="lbl">${nm(0)} vs. ${nm(1)}</div><h1 class="dsp title">Standings</h1></div>${help}</div>`;
+  if(last&&!any&&!started(e.rounds[0])){
+    h+=`<div class="banner hot">${esc(last.loser)} wears the Jacket for Round 1, and introduces ${esc(last.champ)} on the first tee in full TV announcer voice.</div>`;
+  }
+  if(any){
+    h+=`<div class="card"><div class="lbl">Standings after ${doneRounds().length===1?'1 round':doneRounds().length+' rounds'}</div><div class="segscore"><div><div class="v num">${a}</div><div class="n">${nm(0)}</div></div><div class="lbl">Pts</div><div><div class="v num">${b}</div><div class="n">${nm(1)}</div></div></div></div>`;
+  }
+  e.rounds.forEach((r,i)=>{
+    if(i===2&&e.skipR3)return;
+    const c=calc(r),state=r.done?`<span class="num" style="font-weight:700">${c.p[0].total} - ${c.p[1].total}</span>`:i===cur&&started(r)?`<span class="tag live">Hole ${r.hole+1}</span>`:'';
+    h+=`<button class="rd" ${r.done?`data-a="viewRound" data-i="${i}"`:i===cur?`data-a="play"`:'disabled'}><span><span class="name" style="font-size:15px">Round ${i+1}</span><br><span class="sub">Stableford and bonuses</span></span>${state}</button>`;
+  });
+  const m=e.match,st=m&&mState(m);
+  h+=`<button class="rd" ${matchReady()?'data-a="match"':'disabled'}><span><span class="name" style="font-size:15px">${e.skipR3?'Round 3':'Round 4'}: Sunday Match</span><br><span class="sub">Winner takes the event</span></span>${m&&st.winner==null?`<span class="tag live">${leadText(st.lead)}</span>`:''}</button>`;
+  h+='<div class="foot" style="flex-direction:column">';
+  if(cur>=0)h+=`<button class="btn pri big" data-a="play">${started(e.rounds[cur])?'Resume':'Start'} Round ${cur+1}</button>`;
+  else h+=`<button class="btn pri big" data-a="match">${m?'Resume':'Start'} Sunday Match</button>`;
+  if(cur===2&&!started(e.rounds[2]))h+='<button class="btn big" data-a="skipR3">Only 3 rounds this week? Skip to the match</button>';
+  if(e.skipR3&&!e.match)h+='<button class="btn big" data-a="unskip">Bring back Round 3</button>';
+  h+='</div>';
+  if(S.history.length){const w=[0,1].map(i=>S.history.filter(x=>x.champ===S.names[i]).length);h+=`<p class="sub" style="text-align:center">Events won: ${nm(0)} ${w[0]}, ${nm(1)} ${w[1]}</p>`;}
+  h+=`<div class="row" style="justify-content:center;flex-wrap:wrap;gap:14px">${sample?'':'<button class="lnk" data-a="sampleOn">See a sample week</button>'}<button class="lnk" data-a="names">Edit names</button>${sample?'':'<button class="lnk" data-a="backup">Back up scores</button><button class="lnk" data-a="restore">Restore backup</button>'}${sample?'':'<button class="lnk" data-a="reset">Reset event</button>'}</div>`;
+  return h;
+}
+
+function playerCard(p,r,i){
+  const par=S.pars[i],c=r.scores[p],d=c[i],prev=i>0?c[i-1]:null;
+  const live=prev!=null&&prev>=2;
+  const hotLive=prev!=null&&prev<=-1;
+  const tag=live?(d==null?'<span class="tag live">Bounce-Back live</span>':d<=0?'<span class="tag ok">+1 Bounce-Back</span>':''):hotLive?(d==null?`<span class="tag live">Hot Streak: ${hotNeeds(prev)}+</span>`:isHot(prev,d)?'<span class="tag ok">+1 Hot Streak</span>':''):'';
+  const btns=RESULTS.map(([v,l])=>{
+    const dis=par+v<1;
+    const strokes=v===3?`${par+2}+`:par+v;
+    const p2=v===3?0:2-v;
+    return `<button class="pick ${d===v?'on':''}" data-a="score" data-p="${p}" data-v="${v}" ${dis?'disabled':''} aria-pressed="${d===v}"><b>${l}</b><small class="num">${strokes} · ${p2} pt${p2===1?'':'s'}</small></button>`;
+  }).join('');
+  return `<div class="card"><div class="row between"><span class="name">${nm(p)}</span>${tag}</div><div class="grid">${btns}</div></div>`;
+}
+
+function roundScreen(){
+  const ri=view.r,r=E().rounds[ri],i=r.hole,par=S.pars[i],c=calc(r);
+  const si=SEGS.findIndex(s=>i>=s.from&&i<s.to),s=SEGS[si];
+  const both=r.scores[0][i]!=null&&r.scores[1][i]!=null;
+  const bonus=[0,1].map(q=>c.p[q].seg+c.p[q].bounce+c.p[q].streak);
+  let h=sampleBar()+`<div class="head">${backIco}<div><div class="lbl">Round ${ri+1}${r.course?' · '+esc(r.course):''}</div><div class="titlerow">${PIN}<h1 class="dsp title">Hole ${i+1}</h1></div></div>${help}</div>`;
+  h+=`<div class="seg"><span>Par</span>${[3,4,5].map(n=>`<button class="${par===n?'on':''}" data-a="par" data-v="${n}" aria-pressed="${par===n}">${n}</button>`).join('')}</div>`;
+  h+=`<div class="card"><div class="row between"><span class="lbl">${s.name} · ${s.label}</span><span class="tag">Worth ${s.worth}</span></div><div class="segscore"><div><div class="v num">${c.p[0].segs[si]}</div><div class="n">${nm(0)}</div></div><div class="lbl">Pts</div><div><div class="v num">${c.p[1].segs[si]}</div><div class="n">${nm(1)}</div></div></div><div class="sub" style="text-align:center">Bonus so far: ${nm(0)} ${bonus[0]}, ${nm(1)} ${bonus[1]}</div></div>`;
+  h+=playerCard(0,r,i)+playerCard(1,r,i);
+  if(i===s.to-1&&both){
+    const w=c.wins[si];
+    h+=`<div class="banner hot">${w===-1?`${s.name} tied. No bonus.`:`${nm(w)} wins ${s.name}. +${s.worth}.`}${si<2?` ${SEGS[si+1].name} starts 0-0.`:''}</div>`;
+  }
+  h+=`<div class="foot"><button class="btn" data-a="prev" ${i===0?'disabled':''}>Back</button><button class="btn pri grow" data-a="next" ${both?'':'disabled'}>${i===17?'See the card':'Next hole'}</button></div>`;
+  return h;
+}
+
+function resultsScreen(){
+  const ri=view.r,r=E().rounds[ri],c=calc(r);
+  const was=totals();
+  const[a,b]=r.done?was:[was[0]+c.p[0].total,was[1]+c.p[1].total];
+  let h=sampleBar()+`<div class="head">${r.done?backIco:''}<div><div class="lbl">Round ${ri+1} card${r.course?' · '+esc(r.course):''}</div><h1 class="dsp title">${c.p[0].total===c.p[1].total?'Dead even':nm(c.p[0].total>c.p[1].total?0:1)+' takes it'}</h1></div>${help}</div>`;
+  h+=`<div class="card"><table class="board"><thead><tr><th></th><th scope="col">${nm(0)}</th><th scope="col">${nm(1)}</th></tr></thead><tbody>
+  <tr><td>Stableford points</td><td>${c.p[0].stable}</td><td>${c.p[1].stable}</td></tr>
+  <tr><td>Segment bonus</td><td>${c.p[0].seg}</td><td>${c.p[1].seg}</td></tr>
+  <tr><td>Bounce-Back bonus</td><td>${c.p[0].bounce}</td><td>${c.p[1].bounce}</td></tr>
+  <tr><td>Hot Streak bonus</td><td>${c.p[0].streak}</td><td>${c.p[1].streak}</td></tr>
+  <tr class="total"><td>Round total</td><td>${c.p[0].total}</td><td>${c.p[1].total}</td></tr></tbody></table></div>`;
+  h+=`<div class="card"><div class="lbl">Segments</div><table class="board"><tbody>${SEGS.map((s,i)=>`<tr><td>${s.name}</td><td>${c.p[0].segs[i]} - ${c.p[1].segs[i]}</td><td style="min-width:96px">${c.wins[i]==null?'':c.wins[i]===-1?'Tied':nm(c.wins[i])+' +'+s.worth}</td></tr>`).join('')}</tbody></table></div>`;
+  h+=`<div class="card"><div class="lbl">Event standings</div><div class="segscore"><div><div class="v num">${a}</div><div class="n">${nm(0)}</div></div><div class="lbl">Pts</div><div><div class="v num">${b}</div><div class="n">${nm(1)}</div></div></div></div>`;
+  if(!r.done)h+=`<div class="foot"><button class="btn" data-a="fix">Fix a hole</button><button class="btn pri grow" data-a="lock">Lock it in</button></div>`;
+  return h;
+}
+
+function matchScreen(){
+  const m=E().match;
+  if(!m){
+    const[a,b]=totals(),s=startLead(),gap=Math.abs(a-b);
+    return sampleBar()+`<div class="head">${backIco}<div><div class="lbl">Sunday Match</div><h1 class="dsp title">Set the match</h1></div>${help}</div>
+    <div class="card"><div class="lbl">Event points</div><div class="segscore"><div><div class="v num">${a}</div><div class="n">${nm(0)}</div></div><div class="lbl">Pts</div><div><div class="v num">${b}</div><div class="n">${nm(1)}</div></div></div></div>
+    <div class="card status"><div class="lbl">${gap}-point gap</div><div class="dsp">${s===0?'Starts all square':leadText(s)+' on the 1st tee'}</div></div>
+    <div class="banner">Points are done now. Whoever wins this match wins the event.</div>
+    <div class="foot"><button class="btn pri big" data-a="startMatch">Tee it up</button></div>`;
+  }
+  const st=mState(m);
+  const hole=st.n<18?st.n+1:((st.n-18)%18)+1;
+  const dormie=!st.sd&&Math.abs(st.lead)===st.left&&st.left>0;
+  let h=sampleBar()+`<div class="head">${backIco}<div><div class="lbl">${st.sd?'Sudden death':'Sunday Match'}</div><h1 class="dsp title">Hole ${hole}</h1></div>${help}</div>`;
+  h+=`<div class="card status"><div class="dsp">${leadText(st.lead)}</div><p class="sub">${st.sd?'Next win takes the event':`${st.left} to play`}${dormie?' · Dormie':''}</p></div>`;
+  h+=`<div class="lbl" style="margin-top:4px">Who won the hole?</div><div class="match">
+  <button class="btn pri big" data-a="mhole" data-v="0">${nm(0)}</button>
+  <button class="btn big" data-a="mhole" data-v="2">Halved</button>
+  <button class="btn pri big" data-a="mhole" data-v="1">${nm(1)}</button></div>`;
+  h+=`<div class="foot"><button class="btn big" data-a="mundo" ${m.holes.length?'':'disabled'}>Undo last hole</button></div>`;
+  return h;
+}
+
+function champScreen(){
+  const st=mState(E().match),w=st.winner,l=1-w;
+  return sampleBar()+`<div class="head"><div><div class="lbl">The Worsters champion</div><h1 class="dsp champ">${nm(w)}</h1></div>${help}</div>
+  <div class="card status"><div class="lbl">Won the match</div><div class="dsp">${resultText(st)}</div></div>
+  <div class="card"><div class="lbl">The Loser's Jacket</div><p class="name" style="margin:0">${nm(l)}, go get the blazer.</p><p class="sub">Wear it for all of Round 1 of the next event. On the first tee, introduce ${nm(w)} in full TV announcer voice, title and recent accomplishments included.</p></div>
+  <div class="foot" style="flex-direction:column"><button class="btn pri big" data-a="nextEvent">Start next event</button><button class="btn big" data-a="mundo">Undo last hole</button></div>`;
+}
+
+function render(){
+  const a=document.getElementById('app');
+  if(view.s==='match'&&E().match&&mState(E().match).winner!=null)view={s:'champ'};
+  if(view.s==='champ'&&!(E().match&&mState(E().match).winner!=null))view={s:'match'};
+  a.innerHTML=view.s==='home'?homeScreen():view.s==='round'?roundScreen():view.s==='results'?resultsScreen():view.s==='match'?matchScreen():view.s==='champ'?champScreen():weekScreen();
+}
+function toTop(){window.scrollTo(0,0);}
+
+/* Help and sheets */
+const POINTS=`<table class="board"><tbody><tr><td>Double bogey or worse</td><td>0</td></tr><tr><td>Bogey</td><td>1</td></tr><tr><td>Par</td><td>2</td></tr><tr><td>Birdie</td><td>3</td></tr><tr><td>Eagle</td><td>4</td></tr><tr><td>Albatross</td><td>5</td></tr></tbody></table>`;
+const HELP={
+ home:['Home','Set up your round here. Name the course, then tap any hole to switch its par between 3, 4 and 5. When it looks right, tap Tee off.',[['Do the pars save?','Yes. They stay until you change them, so your home course only needs setting up once.'],['We are playing a different course.','Change the name and pars here before you tee off. Rounds already played keep their scores.'],['Can I change a par during the round?','Yes. Each hole has a par button at the top, and it updates this page too.'],['Where are the scores?','Tap Standings for every round, the point totals, names and the sample week.']]],
+ week:['The week','Four rounds in one week. Rounds 1-3 build points. The last round is match play, and that decides the event. Round totals stay hidden until each round is over.',[['What if we only get three rounds in?','After Round 2, tap "Skip to the match." Sunday Match becomes your third round.'],['Does this work on one phone?','Yes. One of you keeps the card for both players.'],['Does it save if I close it?','Yes. Scores save on this phone.'],['How do I keep a copy?','Tap Back up scores on this screen and save the file somewhere safe, like your Files app or email. On a new phone, tap Restore backup and pick that file.']]],
+ round:['Scoring a hole','Tap each player\'s result, then Next hole. Under each result is the score and the points it earns. Once you can\'t beat double bogey, pick up and tap Double+. The screen shows the current segment and bonuses, never the round total.',[['What is a segment?','Mulligan Meadows (1-6), Beverage Cart Bend (7-12) and Collapse Corner (13-18) each start 0-0. Most Stableford points wins the bonus: 1 point for the first two, 2 for Collapse Corner. Ties pay nobody.'],['What is Bounce-Back?','Make par or better right after a double or worse for 1 bonus point. The card shows "Bounce-Back live" when it\'s on.'],['What is Hot Streak?','Make birdie or better, then match it or beat it on the next hole for 1 bonus point. After a birdie you need birdie or better. After an eagle you need eagle or better. Keep it going and it pays on every hole.'],['The par is wrong.','Tap the right par at the top. The app remembers it for every round.'],['I tapped the wrong result.','Tap the right one. Use Back to fix an earlier hole.']]],
+ results:['Round card','Here\'s the full total for the round: Stableford points, plus segment bonuses, Bounce-Backs and Hot Streaks.',[['A hole is wrong. Can I fix it?','Yes, before you lock it in. Tap Fix a hole and use Back to find it.'],['Can I change it after locking in?','Not yet. Check the card before you tap Lock it in.']]],
+ match:['Sunday Match','Each hole is worth one win, and the lower score takes it. The points gap sets the start: 0-3 all square, 4-8 leader 1 up, 9 or more leader 2 up.',[['When does it end?','As soon as someone is up by more holes than are left.'],['What if we tie after 18?','Sudden death, starting on the 1st hole. The first hole won ends it.'],['What is dormie?','The leader is up by exactly the number of holes left, so they can\'t lose in regulation.']]],
+ champ:['Event over','The champion is set. The loser gets the Jacket.',[['What does the loser do?','Wears the blazer for all of Round 1 of the next event and introduces the champion on the first tee in a TV announcer voice.'],['What does Start next event do?','Clears the rounds and adds this win to your events-won count. Par numbers and names stay.']]]
+};
+function openSheet(html){document.getElementById('sheet').innerHTML=`<div class="sheetbg" data-a="close"><div class="sheet" role="dialog" aria-modal="true">${html}</div></div>`;}
+function closeSheet(){document.getElementById('sheet').innerHTML='';}
+function helpSheet(){
+  const[t,body,qs]=HELP[view.s];
+  openSheet(`<h2 class="dsp">${t}</h2><p>${body}</p>${view.s==='round'||view.s==='week'?`<h3 class="dsp">Stableford points</h3>${POINTS}`:''}<h3 class="dsp">Common questions</h3>${qs.map(([q,a])=>`<p class="q">${q}</p><p>${a}</p>`).join('')}<button class="btn pri big" data-a="close">Got it</button>`);
+}
+function namesSheet(){
+  openSheet(`<h2 class="dsp">Names</h2><label>Player 1<input id="n0" maxlength="14" value="${nm(0)}"></label><label>Player 2<input id="n1" maxlength="14" value="${nm(1)}"></label><button class="btn pri big" data-a="saveNames">Save</button>`);
+}
+
+/* Sample week: two rounds in the books, one in progress. */
+function sampleState(){
+  const s=fresh();s.course='Pine Hollow';
+  const R=(a,b,hole,done)=>{const r=blankRound();r.scores=[a.concat(Array(18-a.length).fill(null)),b.concat(Array(18-b.length).fill(null))];r.hole=hole;r.done=done;r.course='Pine Hollow';return r;};
+  s.event.rounds[0]=R([0,1,1,0,2,0,1,3,1,0,1,0,1,1,0,3,0,1],[1,1,0,1,0,1,1,1,3,0,1,1,0,1,1,1,0,0],17,true);
+  s.event.rounds[1]=R([1,0,1,1,3,1,0,1,0,1,3,0,0,1,1,0,1,-1],[0,1,1,0,1,0,1,3,0,1,1,1,1,0,3,1,1,0],17,true);
+  s.event.rounds[2]=R([1,0,3,0,1,0,1],[0,1,1,1,0,1,3],7,false);
+  s.history=[{champ:'Lucas',loser:'Joel'}];
+  return s;
+}
+
+const act={
+ help:helpSheet,close:closeSheet,names:namesSheet,
+ saveNames(){const a=document.getElementById('n0').value.trim(),b=document.getElementById('n1').value.trim();if(a)S.names[0]=a;if(b)S.names[1]=b;save();closeSheet();render();},
+ home(){view={s:'home'};render();toTop();},
+ week(){view={s:'week'};render();toTop();},
+ cyclePar(el){const i=+el.dataset.i;S.pars[i]=S.pars[i]>=5?3:S.pars[i]+1;save();render();},
+ teeOff(){const cur=currentRound();if(cur<0){view={s:'match'};render();toTop();return;}const r=E().rounds[cur];if(!started(r))r.course=(S.course||'').trim();save();view={s:'round',r:cur};render();toTop();},
+ play(){view={s:'round',r:currentRound()};render();toTop();},
+ viewRound(el){view={s:'results',r:+el.dataset.i};render();toTop();},
+ match(){view={s:'match'};render();toTop();},
+ par(el){S.pars[E().rounds[view.r].hole]=+el.dataset.v;save();render();},
+ score(el){const r=E().rounds[view.r],p=+el.dataset.p,v=+el.dataset.v,h=r.hole,prev=h>0?r.scores[p][h-1]:null,same=r.scores[p][h]===v;r.scores[p][h]=v;if(!same)showToast(p,v,h,prev,r);save();render();},
+ prev(){hideToast();const r=E().rounds[view.r];if(r.hole>0)r.hole--;save();render();toTop();},
+ next(){hideToast();const r=E().rounds[view.r];if(r.hole<17){r.hole++;save();render();toTop();}else{view={s:'results',r:view.r};render();toTop();}},
+ fix(){view={s:'round',r:view.r};render();toTop();},
+ lock(){E().rounds[view.r].done=true;save();view={s:'week'};render();toTop();},
+ skipR3(){E().skipR3=true;save();render();},
+ unskip(){E().skipR3=false;save();render();},
+ startMatch(){E().match={start:startLead(),holes:[]};save();render();toTop();},
+ mhole(el){E().match.holes.push(+el.dataset.v);save();render();toTop();},
+ mundo(){E().match.holes.pop();save();view={s:'match'};render();toTop();},
+ nextEvent(){const st=mState(E().match);S.history.push({champ:S.names[st.winner],loser:S.names[1-st.winner]});S.event=blankEvent();save();view={s:'home'};render();toTop();},
+ reset(){openSheet(`<h2 class="dsp">Reset this event?</h2><p>This clears every round in the current event. Names, pars and events won stay.</p><button class="btn pri big" data-a="resetYes">Reset event</button><button class="btn big well" data-a="close">Keep it</button>`);},
+ resetYes(){S.event=blankEvent();save();closeSheet();view={s:'week'};render();},
+ async backup(){
+  const name=`the-worsters-backup-${new Date().toISOString().slice(0,10)}.json`;
+  const blob=new Blob([JSON.stringify(S)],{type:'application/json'});
+  const file=new File([blob],name,{type:'application/json'});
+  if(navigator.canShare&&navigator.canShare({files:[file]})){try{await navigator.share({files:[file],title:'The Worsters backup'});}catch(e){}return;}
+  const u=URL.createObjectURL(blob),a=document.createElement('a');a.href=u;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(u),2000);
+ },
+ restore(){document.getElementById('restoreFile').click();},
+ restoreYes(){S=rename(pendingRestore);pendingRestore=null;save();closeSheet();view={s:'home'};render();toTop();},
+ sampleOn(){realS=S;S=sampleState();sample=true;view={s:'week'};render();toTop();},
+ sampleOff(){S=realS;realS=null;sample=false;view={s:'week'};render();toTop();}
+};
+document.addEventListener('click',e=>{
+  const el=e.target.closest('[data-a]');if(!el)return;
+  if(el.classList.contains('sheetbg')&&e.target!==el)return;
+  if(!el.disabled&&act[el.dataset.a])act[el.dataset.a](el);
+});
+document.addEventListener('input',e=>{if(e.target.id==='course'){S.course=e.target.value;save();}});
+document.getElementById('restoreFile').addEventListener('change',async e=>{
+  const f=e.target.files[0];e.target.value='';if(!f)return;
+  try{
+    const v=JSON.parse(await f.text());
+    if(!v||v.v!==1||!v.event||!Array.isArray(v.event.rounds)||v.event.rounds.length!==3||!Array.isArray(v.pars))throw 0;
+    pendingRestore=v;
+    openSheet(`<h2 class="dsp">Restore this backup?</h2><p>This replaces everything on this phone with the backup from ${esc(new Date(v.updated||Date.now()).toLocaleDateString())}.</p><button class="btn pri big" data-a="restoreYes">Restore backup</button><button class="btn big well" data-a="close">Cancel</button>`);
+  }catch(x){openSheet(`<h2 class="dsp">Wrong file</h2><p>That file isn't a Worsters backup.</p><button class="btn pri big" data-a="close">Got it</button>`);}
+});
+load();render();
+if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
+</script>
+</body>
+</html>
